@@ -14,8 +14,7 @@ namespace Region.Utils.Test
         public void TestCreateHybridIndex()
         {
             String result = SpellIndexUtils.CreateHybridIndex("妹子");
-            Debug.Print(result);
-            //Console.WriteLine(result);
+            Debug.Print(result);          
             Assert.IsNotNull(result);                
            
         }
