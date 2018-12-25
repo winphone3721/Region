@@ -7,7 +7,7 @@ namespace Region.Utils.Test
     [TestClass]
     public class SpellIndexUtilsTest 
     {
-        /// <summary>
+        /// <summary> 
         /// 创建混合索引
         /// </summary>
         [TestMethod]
