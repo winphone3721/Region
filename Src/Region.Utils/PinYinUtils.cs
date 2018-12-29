@@ -7,52 +7,139 @@ using System.Threading.Tasks;
 
 namespace Region.Utils
 {
-    public class SpellIndexUtils
-    {  /// <summary>
-       /// 声母
-       /// </summary>
-        private static string[,] initialsList = new string[3, 2] { { "Z", "Zh" }, { "C", "Ch" }, { "S", "Sh" } };
+    /// <summary>
+    /// 拼音工具
+    /// </summary>
+    public class PinYinUtils
+    {
+        /// <summary>
+        /// 声母
+        /// </summary>
+        private static readonly string[,] INITIALS_LIST = new string[3, 2]
+        {
+            { "Z", "Zh" },
+            { "C", "Ch" },
+            { "S", "Sh" }
+        };
 
         /// <summary>
         /// 韵母 Finals 
         /// </summary>
-        private static string[,] finalsList = new string[5, 2] { { "an", "ang" }, { "en", "eng" }, { "in", "ing" }, { "An", "Ang" }, { "En", "Eng" } };
+        private static readonly string[,] FINALS_LIST = new string[5, 2]
+        {
+            { "an", "ang" },
+            { "en", "eng" },
+            { "in", "ing" },
+            { "An", "Ang" },
+            { "En", "Eng" }
+        };
 
         /// <summary>
         /// 声母加韵母
         /// </summary>
-        private static string[,] spellList = new string[8, 2] { { "Z", "Zh" }, { "C", "Ch" }, { "S", "Sh" }, { "an", "ang" }, { "en", "eng" }, { "in", "ing" }, { "An", "Ang" }, { "En", "Eng" } };
+        private static readonly string[,] SPELL_LIST = new string[8, 2]
+        {
+            { "Z", "Zh" },
+            { "C", "Ch" },
+            { "S", "Sh" },
+            { "an", "ang" },
+            { "en", "eng" },
+            { "in", "ing" },
+            { "An", "Ang" },
+            { "En", "Eng" }
+        };
 
         /// <summary>
-        /// 创建混合索引
+        /// 全拼字典-用于校正多音字城市
+        /// </summary>
+        private static readonly Dictionary<String, String> SPELL_DICTIONARY = new Dictionary<String, String>()
+        {
+            { "重庆", "ChongQing" },
+            { "长春", "ChangChun" },
+            { "长沙", "ChangSha" },
+            { "石家庄", "ShiJiaZhuang" },
+
+        };
+        /// <summary>
+        /// 简拼-用于校正多音字城市
+        /// </summary>
+        private static readonly Dictionary<String, String> SHORT_SPELL_DICTIONARY = new Dictionary<String, String>()
+        {
+            { "重庆", "CQ" },
+            { "长春", "CC" },
+            { "长沙", "CS" },
+            { "石家庄", "SJZ" },
+        };
+
+        /// <summary>
+        /// 创建混合索引 简拼与全拼混合体 如：北京 BJ;BJing;BeiJ;BJin;BeiJing;BeiJin
         /// </summary>
         /// <param name="chinese"></param>
         /// <returns></returns>
         public static string CreateHybridIndex(string chinese)
         {
-            return CreateHybridIndex(GetSpell(chinese, true), GetSpell(chinese));
+            return CreateHybridIndex(ConvertToPinYin(chinese, true), ConvertToPinYin(chinese));
         }
 
         #region 汉字转化拼音
 
-        /// <summary> 
-        /// 汉字转化为拼音
-        /// </summary> 
-        /// <param name="chinese">汉字</param> 
-        /// <returns>全拼</returns> 
-        public static string GetSpell(string chinese, bool isShortSpell = false)
+        /// <summary>
+        /// 汉字转化为拼音 如：chinese=北京
+        /// </summary>
+        /// <param name="chinese"></param>
+        /// <param name="isShortSpell">fasle为简拼（如：北京 BJ）/true为全拼（如北京：BeiJing）</param>
+        /// <returns></returns>
+        public static string ConvertToPinYin(string chinese, bool isShortSpell = false)
         {
-            string result = string.Empty;
-            foreach (char spellChar in chinese)
+            if (string.IsNullOrWhiteSpace(chinese))
             {
-                if (spellChar >= 0x4e00 && spellChar <= 0x9fbb)//判断是否是中文
+                return string.Empty;
+            }
+            if (SPELL_DICTIONARY.ContainsKey(chinese))
+            {
+                return isShortSpell ? SHORT_SPELL_DICTIONARY[chinese] : SPELL_DICTIONARY[chinese];
+            }
+            StringBuilder result = new StringBuilder();
+            foreach (char chineseChar in chinese)
+            {
+                if (isChinese(chineseChar))//判断是否是中文
                 {
-                    ChineseChar chineseChar = new ChineseChar(spellChar);
-                    result += isShortSpell ? chineseChar.Pinyins[0].Substring(0, 1) : Capitalize(chineseChar.Pinyins[0]);
+                    ChineseChar pinYin = new ChineseChar(chineseChar);
+                    result.Append(isShortSpell ? pinYin.Pinyins[0].Substring(0, 1) : Capitalize(pinYin.Pinyins[0]));
                 }
             }
-            return result;
+            return result.ToString();
         }
+        /// <summary>
+        /// 是否是中文
+        /// </summary>
+        /// <param name="chinese">需检测的中文</param>
+        /// <returns></returns>
+        private static bool isChinese(string chinese)
+        {
+            if (string.IsNullOrWhiteSpace(chinese))
+            {
+                return false;
+            }
+            foreach (char chineseChar in chinese)
+            {
+                if (!isChinese(chineseChar))//判断是否是中文
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        private static bool isChinese(char chineseChar)
+        {
+            if (chineseChar >= 0x4e00 && chineseChar <= 0x9fbb)//判断是否是中文
+            {
+                return true;
+            }
+            return false;
+
+        }
+
         /// <summary>
         /// 首字母变为大写
         /// </summary>
@@ -66,20 +153,27 @@ namespace Region.Utils
                 : spell.Substring(0, 1).ToUpper() + spell.Substring(1, spell.Length - 2).ToLower();
         }
 
+
         #endregion
 
         #region 包含函数
 
         /// <summary>
-        /// 中文名称匹配
+        /// 中文名称匹配 类似 sql中 like 'abc%'
         /// </summary>
         /// <param name="value"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static bool IsChineseMatch(string value, string query)
+        private static bool IsChineseMatch(string value, string query)
         {
-            if (string.IsNullOrWhiteSpace(query) || string.IsNullOrWhiteSpace(value)) return false;
-            if (query.Length > value.Length) return false;
+            if (string.IsNullOrWhiteSpace(query) || string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+            if (query.Length > value.Length)
+            {
+                return false;
+            }
             int len = query.Length;
             return value.ToLower().Substring(0, len).Contains(query.ToLower());
 
@@ -92,8 +186,14 @@ namespace Region.Utils
         /// <returns></returns>
         public static bool IsSpellMatch(string value, string query)
         {
-            if (string.IsNullOrWhiteSpace(query) || string.IsNullOrWhiteSpace(value)) return false;
-            if (IsSpellContains(value, query)) return true;
+            if (string.IsNullOrWhiteSpace(query) || string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+            if (IsSpellContains(value, query))
+            {
+                return true;
+            }
             return IsSpellAppendContains(value, query);
         }
 
@@ -105,7 +205,10 @@ namespace Region.Utils
         /// <returns></returns>
         private static bool IsSpellContains(string value, string query)
         {
-            if (query.Length > value.Length) return false;
+            if (query.Length > value.Length)
+            {
+                return false;
+            }
             return value.Substring(0, query.Length).ToLower().Contains(query.ToLower());
 
         }
@@ -120,7 +223,10 @@ namespace Region.Utils
         {
             string queryAppend = Append(query, true).ToLower();
             string valueAppend = Append(value, true).ToLower();
-            if (queryAppend.Length > valueAppend.Length) return false;
+            if (queryAppend.Length > valueAppend.Length)
+            {
+                return false;
+            }
             return IsSpellContains(valueAppend, queryAppend);
         }
         #endregion
@@ -148,12 +254,12 @@ namespace Region.Utils
         /// <param name="spell"></param>
         /// <param name="isLower"></param>
         /// <returns></returns>
-        public static string Append(string spell, bool isLower)
+        private static string Append(string spell, bool isLower)
         {
             spell = isLower ? spell.ToLower() : spell;
             for (int i = 0; i < 8; i++)
             {
-                spell = isLower ? spell.Replace(spellList[i, 0].ToLower(), spellList[i, 1].ToLower()) : spell.Replace(spellList[i, 0], spellList[i, 1]);
+                spell = isLower ? spell.Replace(SPELL_LIST[i, 0].ToLower(), SPELL_LIST[i, 1].ToLower()) : spell.Replace(SPELL_LIST[i, 0], SPELL_LIST[i, 1]);
             }
             spell = spell.Replace("hh", "h");
             spell = spell.Replace("gg", "g");
@@ -165,11 +271,11 @@ namespace Region.Utils
         /// </summary>
         /// <param name="spell"></param>
         /// <returns></returns>
-        public static string AppendInitials(string spell)
+        private static string AppendInitials(string spell)
         {
             for (int i = 0; i < 3; i++)
             {
-                spell = spell.Replace(initialsList[i, 0], initialsList[i, 1]);
+                spell = spell.Replace(INITIALS_LIST[i, 0], INITIALS_LIST[i, 1]);
             }
             spell = spell.Replace("hh", "h");
             return spell;
@@ -180,11 +286,11 @@ namespace Region.Utils
         /// </summary>
         /// <param name="spell"></param>
         /// <returns></returns>
-        public static string AppendFinals(string spell)
+        private static string AppendFinals(string spell)
         {
             for (int i = 0; i < 5; i++)
             {
-                spell = spell.Replace(finalsList[i, 0], finalsList[i, 1]);
+                spell = spell.Replace(FINALS_LIST[i, 0], FINALS_LIST[i, 1]);
             }
             spell = spell.Replace("gg", "g");
             return spell;
@@ -195,11 +301,11 @@ namespace Region.Utils
         /// </summary>
         /// <param name="spell"></param>
         /// <returns></returns>
-        public static string Remove(string spell)
+        private static string Remove(string spell)
         {
             for (int i = 0; i < 8; i++)
             {
-                spell = spell.Replace(spellList[i, 1], spellList[i, 0]);
+                spell = spell.Replace(SPELL_LIST[i, 1], SPELL_LIST[i, 0]);
             }
             return spell;
         }
@@ -209,11 +315,11 @@ namespace Region.Utils
         /// </summary>
         /// <param name="spell"></param>
         /// <returns></returns>
-        public static string RemoveInitials(string spell)
+        private static string RemoveInitials(string spell)
         {
             for (int i = 0; i < 3; i++)
             {
-                spell = spell.Replace(initialsList[i, 1], initialsList[i, 0]);
+                spell = spell.Replace(INITIALS_LIST[i, 1], INITIALS_LIST[i, 0]);
             }
             return spell;
         }
@@ -223,11 +329,11 @@ namespace Region.Utils
         /// </summary>
         /// <param name="spell"></param>
         /// <returns></returns>
-        public static string RemoveFinals(string spell)
+        private static string RemoveFinals(string spell)
         {
             for (int i = 0; i < 5; i++)
             {
-                spell = spell.Replace(finalsList[i, 1], finalsList[i, 0]);
+                spell = spell.Replace(FINALS_LIST[i, 1], FINALS_LIST[i, 0]);
             }
             return spell;
         }
@@ -238,7 +344,7 @@ namespace Region.Utils
         /// </summary>
         /// <param name="spell"></param>
         /// <returns></returns>
-        public static List<string> SplitSpell(string spell)
+        private static List<string> SplitSpell(string spell)
         {
             if (string.IsNullOrWhiteSpace(spell))
             {
@@ -278,7 +384,7 @@ namespace Region.Utils
         /// <param name="shortSpell"></param>
         /// <param name="spell"></param>
         /// <returns></returns>
-        public static string CreateHybridIndex(string shortSpell, string spell)
+        private static string CreateHybridIndex(string shortSpell, string spell)
         {
             List<List<string>> list = new List<List<string>>(); //第一层有多少个分割的拼音，第二层拼音
             list.Add(SplitSpell(shortSpell));                   //添加原始数据---简拼
@@ -355,13 +461,13 @@ namespace Region.Utils
         /// <param name="list"></param>
         /// <returns></returns>
         private static string GetCombinationToString(List<string> list)
-        {
-            string result = null;
+        {           
+            StringBuilder result = new StringBuilder();           
             foreach (var item in list)
             {
-                result += item + ";";
+                result.Append(string.Format("{0}{1}", item, ";"));
             }
-            return result.Substring(0, result.Length - 1);
+            return result.ToString().Substring(0, result.Length - 1);
         }
 
         /// <summary>
@@ -372,12 +478,12 @@ namespace Region.Utils
         private static string Distinct(string hybridSpell)
         {
             var list = hybridSpell.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Distinct();
-            string result = null;
+            StringBuilder result = new StringBuilder();
             foreach (var item in list)
             {
-                result += item + ";";
+                result.Append(string.Format("{0}{1}",item ,";"));
             }
-            return result.Substring(0, result.Length - 1);
+            return result.ToString().Substring(0, result.Length - 1);
         }
     }
 }
