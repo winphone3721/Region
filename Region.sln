@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Region.ICache", "Src\Region
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Region.Service", "Src\Region.Service\Region.Service.csproj", "{73152F8C-267D-43C7-841A-30B718194E9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Region.Model", "Region.Model\Region.Model.csproj", "{19B80D78-C135-4436-8CA5-33937B290C32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Region.Model", "Src\Region.Model\Region.Model.csproj", "{19B80D78-C135-4436-8CA5-33937B290C32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
