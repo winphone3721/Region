@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Region.Utils.Test
 {
@@ -16,7 +16,7 @@ namespace Region.Utils.Test
         [TestMethod]
         public void TestCreateHybridIndex()
         {
-            String result = PinYinUtils.CreateHybridIndex("妹子");
+            string result = PinYinUtils.CreateHybridIndex("妹子");
             result = PinYinUtils.CreateHybridIndex("中国华为");
             Debug.Print(result);
             Assert.IsNotNull(result);
@@ -28,15 +28,13 @@ namespace Region.Utils.Test
         [TestMethod]
         public void TestConvertToPinYin()
         {
-
             foreach (var item in GetCity())
             {
-                String result = PinYinUtils.ConvertToPinYin(item);
-                String resultShort = PinYinUtils.ConvertToPinYin(item, true);
+                string result = PinYinUtils.ConvertToPinYin(item);
+                string resultShort = PinYinUtils.ConvertToPinYin(item, true);
                 Debug.Print(String.Format("{0}：{1}  ：  {2}", item, result,resultShort));
                 Assert.IsNotNull(result);
             }
-
         }
 
         ///// <summary>
@@ -45,18 +43,16 @@ namespace Region.Utils.Test
         //[TestMethod]
         //public void TestConvertToPinYinByShort()
         //{
-          
+        
         //    foreach (var item in GetCity())
         //    {
         //        String result = PinYinUtils.ConvertToPinYin(item, true);
         //        Debug.Print(String.Format("{0}：{1}", item, result));
         //        Assert.IsNotNull(result);
         //    }         
-           
+
         //}
-        private List<string> GetCity()
-        {
-            return new List<string>()
+        private List<string> GetCity() => new List<string>()
         {
             "北京",
             "天津",
@@ -122,7 +118,7 @@ namespace Region.Utils.Test
             "鸡西",
             "鹤岗",
             "双鸭山",
-             "大庆",
+            "大庆",
             "伊春",
             "佳木斯",
             "七台河",
@@ -136,7 +132,7 @@ namespace Region.Utils.Test
             "徐州",
             "常州",
             "苏州",
-             "南通",
+            "南通",
             "连云港",
             "淮安",
             "盐城",
@@ -150,7 +146,7 @@ namespace Region.Utils.Test
             "嘉兴",
             "湖州",
             "绍兴",
-             "金华",
+            "金华",
             "衢州",
             "舟山",
             "台州",
@@ -164,7 +160,7 @@ namespace Region.Utils.Test
             "铜陵",
             "安庆",
             "黄山",
-             "滁州",
+            "滁州",
             "阜阳",
             "宿州",
             "六安",
@@ -178,7 +174,7 @@ namespace Region.Utils.Test
             "泉州",
             "漳州",
             "南平",
-             "龙岩",
+            "龙岩",
             "宁德",
             "南昌",
             "景德镇",
@@ -192,7 +188,7 @@ namespace Region.Utils.Test
             "抚州",
             "上饶",
             "济南",
-             "青岛",
+            "青岛",
             "淄博",
             "枣庄",
             "东营",
@@ -206,7 +202,7 @@ namespace Region.Utils.Test
             "临沂",
             "德州",
             "聊城",
-             "滨州",
+            "滨州",
             "菏泽",
             "郑州",
             "开封",
@@ -220,7 +216,7 @@ namespace Region.Utils.Test
             "许昌",
             "漯河",
             "三门峡",
-             "南阳",
+            "南阳",
             "商丘",
             "信阳",
             "周口",
@@ -234,7 +230,7 @@ namespace Region.Utils.Test
             "鄂州",
             "荆门",
             "孝感",
-             "荆州",
+            "荆州",
             "黄冈",
             "咸宁",
             "随州",
@@ -248,7 +244,7 @@ namespace Region.Utils.Test
             "湘潭",
             "衡阳",
             "邵阳",
-             "岳阳",
+            "岳阳",
             "常德",
             "张家界",
             "益阳",
@@ -262,7 +258,7 @@ namespace Region.Utils.Test
             "深圳",
             "珠海",
             "汕头",
-             "佛山",
+            "佛山",
             "江门",
             "湛江",
             "茂名",
@@ -276,7 +272,7 @@ namespace Region.Utils.Test
             "东莞",
             "中山",
             "潮州",
-             "揭阳",
+            "揭阳",
             "云浮",
             "南宁",
             "柳州",
@@ -290,7 +286,7 @@ namespace Region.Utils.Test
             "百色",
             "贺州",
             "河池",
-             "来宾",
+            "来宾",
             "崇左",
             "海口",
             "三亚",
@@ -304,7 +300,7 @@ namespace Region.Utils.Test
             "重庆",
             "成都",
             "自贡",
-             "攀枝花",
+            "攀枝花",
             "泸州",
             "德阳",
             "绵阳",
@@ -318,7 +314,7 @@ namespace Region.Utils.Test
             "广安",
             "达州",
             "雅安",
-             "巴中",
+            "巴中",
             "资阳",
             "阿坝",
             "甘孜",
@@ -332,7 +328,7 @@ namespace Region.Utils.Test
             "黔西",
             "黔东",
             "黔南",
-             "昆明",
+            "昆明",
             "曲靖",
             "玉溪",
             "保山",
@@ -346,7 +342,7 @@ namespace Region.Utils.Test
             "西双版纳",
             "大理",
             "德宏",
-             "怒江",
+            "怒江",
             "迪庆",
             "拉萨",
             "日喀则",
@@ -360,7 +356,7 @@ namespace Region.Utils.Test
             "宝鸡",
             "咸阳",
             "渭南",
-             "延安",
+            "延安",
             "汉中",
             "榆林",
             "安康",
@@ -374,7 +370,7 @@ namespace Region.Utils.Test
             "张掖",
             "平凉",
             "酒泉",
-             "庆阳",
+            "庆阳",
             "定西",
             "陇南",
             "临夏",
@@ -415,7 +411,6 @@ namespace Region.Utils.Test
 
 
         };
-        }
 
     }
 }

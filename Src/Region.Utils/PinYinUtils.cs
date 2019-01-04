@@ -1,4 +1,5 @@
 ﻿using Microsoft.International.Converters.PinYinConverter;
+using Region.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,26 +50,65 @@ namespace Region.Utils
             { "En", "Eng" }
         };
 
-        /// <summary>
-        /// 全拼字典-用于校正多音字城市
-        /// </summary>
-        private static readonly Dictionary<String, String> SPELL_DICTIONARY = new Dictionary<String, String>()
-        {
-            { "重庆", "ChongQing" },
-            { "长春", "ChangChun" },
-            { "长沙", "ChangSha" },
-            { "石家庄", "ShiJiaZhuang" },
+        ///// <summary>
+        ///// 全拼字典-用于校正多音字城市
+        ///// </summary>
+        //private static readonly Dictionary<String, String> SPELL_DICTIONARY = new Dictionary<String, String>()
+        //{
+        //    { "重庆","ChongQing"},
+        //    { "长春", "ChangChun" },
+        //    { "长沙", "ChangSha"},
+        //    { "石家庄", "ShiJiaZhuang" },
+        //    { "邢台","XinTai"},
 
-        };
+        //};
+        ///// <summary>
+        ///// 简拼-用于校正多音字城市
+        ///// </summary>
+        //private static readonly Dictionary<String, String> SHORT_SPELL_DICTIONARY = new Dictionary<String, String>()
+        //{
+        //    { "重庆", "CQ" },
+        //    { "长春", "CC" },
+        //    { "长沙", "CS" },
+        //    { "石家庄", "SJZ" },
+        //    { "邢台","XT"},
+        //};
         /// <summary>
-        /// 简拼-用于校正多音字城市
+        ///拼音字典-用于校正多音字城市
         /// </summary>
-        private static readonly Dictionary<String, String> SHORT_SPELL_DICTIONARY = new Dictionary<String, String>()
+        private static readonly Dictionary<String, ChineseCharacter> CORRECT_DICTIONARY = new Dictionary<String, ChineseCharacter>()
         {
-            { "重庆", "CQ" },
-            { "长春", "CC" },
-            { "长沙", "CS" },
-            { "石家庄", "SJZ" },
+            { "重庆", new ChineseCharacter(){ Spell ="ChongQing" , ShortSpell="CQ"} },
+            { "长春", new ChineseCharacter(){ Spell ="ChangChun" , ShortSpell="CQ"} },
+            { "长沙", new ChineseCharacter(){ Spell ="ChangSha" , ShortSpell="CS"} },
+            { "石家庄", new ChineseCharacter(){ Spell ="ShiJiaZhuang" , ShortSpell="SJZ"} },
+            { "邢台", new ChineseCharacter(){ Spell ="XinTai" , ShortSpell="XT"} },
+            { "张家口", new ChineseCharacter(){ Spell ="ZhangJiaKou" , ShortSpell="ZJK"} },
+            { "齐齐哈尔", new ChineseCharacter(){ Spell ="QiQiHaEr" , ShortSpell="QQHE"} },
+            { "无锡", new ChineseCharacter(){ Spell ="WuXi" , ShortSpell="WX"} },
+            { "蚌埠", new ChineseCharacter(){ Spell ="BengBu" , ShortSpell="BB"} },
+            { "鹰潭", new ChineseCharacter(){ Spell ="YingTan" , ShortSpell="YT"} },
+            { "南平", new ChineseCharacter(){ Spell ="NanPing  " , ShortSpell="NP"} },
+            { "南昌", new ChineseCharacter(){ Spell ="NanChang  " , ShortSpell="NC"} },
+            { "济南", new ChineseCharacter(){ Spell ="JiNan" , ShortSpell="YN"} },
+            { "许昌", new ChineseCharacter(){ Spell ="XuChang" , ShortSpell="XC"} },
+            { "南阳", new ChineseCharacter(){ Spell ="NanYang" , ShortSpell="NY"} },
+            { "黄石", new ChineseCharacter(){ Spell ="HuangShi" , ShortSpell="HS"} },
+            { "张家界", new ChineseCharacter(){ Spell ="ZhangJiaJie " , ShortSpell="ZJJ"} },
+            { "娄底", new ChineseCharacter(){ Spell ="LouDi" , ShortSpell="LD"} },
+            { "南宁", new ChineseCharacter(){ Spell ="NanNing" , ShortSpell="NN"} },
+            { "万宁", new ChineseCharacter(){ Spell ="WanNing" , ShortSpell="WN"} },
+            { "防城港", new ChineseCharacter(){ Spell ="FangChengXiang  " , ShortSpell="FCX"} },          
+            { "成都", new ChineseCharacter(){ Spell ="ChengDu" , ShortSpell="CD"} },
+            { "广元", new ChineseCharacter(){ Spell ="GuangYuan" , ShortSpell="GY"} },
+            { "南充", new ChineseCharacter(){ Spell ="NanChong" , ShortSpell="NC"} },
+            { "广安", new ChineseCharacter(){ Spell ="GuangAn" , ShortSpell="GA"} },
+            { "南京", new ChineseCharacter(){ Spell ="NanJing" , ShortSpell="NJ"} },
+            { "南通", new ChineseCharacter(){ Spell ="NanTong" , ShortSpell="NT"} },
+            { "淮南", new ChineseCharacter(){ Spell ="HuaiNan" , ShortSpell="HN"} },
+            { "广州", new ChineseCharacter(){ Spell ="GuangZhou" , ShortSpell="GZ"} },
+            { "合肥", new ChineseCharacter(){ Spell ="HeFei" , ShortSpell="HF"} },
+
         };
 
         /// <summary>
@@ -95,9 +135,10 @@ namespace Region.Utils
             {
                 return string.Empty;
             }
-            if (SPELL_DICTIONARY.ContainsKey(chinese))
+            if (CORRECT_DICTIONARY.ContainsKey(chinese))
             {
-                return isShortSpell ? SHORT_SPELL_DICTIONARY[chinese] : SPELL_DICTIONARY[chinese];
+                //return isShortSpell ? SHORT_SPELL_DICTIONARY[chinese] : SPELL_DICTIONARY[chinese];
+                return isShortSpell ? CORRECT_DICTIONARY[chinese].ShortSpell: CORRECT_DICTIONARY[chinese].Spell;
             }
             StringBuilder result = new StringBuilder();
             foreach (char chineseChar in chinese)
